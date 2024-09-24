@@ -2,31 +2,69 @@ import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
+import { deployAppIcon } from './icons';
+import { DocumentWidget } from '@jupyterlab/docregistry';
 
-import { ISettingRegistry } from '@jupyterlab/settingregistry';
+namespace CommandIDs {
+  /**
+   * Opens the URL to deploy the application with pre-populated fields
+   */
+  export const deployApp = 'jhub-apps:deploy-app';
+}
 
-/**
- * Initialization data for the jupyterlab-jhub-apps extension.
- */
-const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'jupyterlab-jhub-apps:plugin',
-  description: 'Customizations for jhub-apps.',
+interface IDeployAppArgs {
+  /**
+   * The origin of the command e.g. main-menu, context-menu, etc.
+   */
+  origin?: string;
+}
+
+const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
+  id: 'jupyterlab-jhub-apps:commands',
+  description: 'Adds additional commands used by jhub-apps.',
   autoStart: true,
-  optional: [ISettingRegistry],
-  activate: (app: JupyterFrontEnd, settingRegistry: ISettingRegistry | null) => {
-    console.log('JupyterLab extension jupyterlab-jhub-apps is activated!');
+  requires: [],
+  activate: async (app: JupyterFrontEnd) => {
+    const openURL = async (url: string) => {
+      try {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        console.warn(`Error opening ${url}: ${error}`);
+      }
+    };
 
-    if (settingRegistry) {
-      settingRegistry
-        .load(plugin.id)
-        .then(settings => {
-          console.log('jupyterlab-jhub-apps settings loaded:', settings.composite);
-        })
-        .catch(reason => {
-          console.error('Failed to load settings for jupyterlab-jhub-apps.', reason);
-        });
-    }
+    const calculateIcon = (args: IDeployAppArgs) => {
+      switch (args.origin) {
+        case 'main-menu':
+          return undefined;
+        case 'context-menu':
+          return deployAppIcon;
+        case undefined:
+          return deployAppIcon;
+        default:
+          return deployAppIcon;
+      }
+    };
+
+    app.commands.addCommand(CommandIDs.deployApp, {
+      execute: async () => {
+        const currentWidget = app.shell.currentWidget;
+        const currentNotebookPath =
+          currentWidget && currentWidget instanceof DocumentWidget
+            ? currentWidget.context.path
+            : '';
+        const deployUrl = `/services/japps/create-app?filepath=${encodeURIComponent(currentNotebookPath)}`;
+
+        await openURL(deployUrl);
+      },
+      label: 'Deploy App',
+      icon: args => {
+        return calculateIcon(args);
+      }
+    });
   }
 };
 
-export default plugin;
+const plugins = [jhubAppsPlugin];
+
+export default plugins;

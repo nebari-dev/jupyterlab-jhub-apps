@@ -1,0 +1,42 @@
+{
+  "jupyter.lab.menus": {
+    "main": [
+      {
+        "id": "jp-mainmenu-services",
+        "label": "Services",
+        "rank": 1000,
+        "items": [
+          {
+            "command": "jhub-apps:deploy-app",
+            "args": {
+              "origin": "main-menu"
+            }
+          }
+        ]
+      }
+    ],
+    "context": [
+      {
+        "command": "jhub-apps:deploy-app",
+        "args": {
+          "origin": "context-menu"
+        },
+        "selector": ".jp-DirListing-item[data-isdir=\"false\"]",
+        "rank": 3
+      }
+    ]
+  },
+  "jupyter.lab.toolbars": {
+    "Notebook": [
+      {
+        "name": "deploy-app",
+        "command": "jhub-apps:deploy-app"
+      }
+    ]
+  },
+  "title": "jupyterlab-jhub-apps",
+  "description": "jupyterlab-jhub-apps custom command settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}
