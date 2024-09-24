@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.3.5
+_src_path: https://github.com/jupyterlab/extension-template
+author_email: nbyrne@quansight.com
+author_name: Nick Byrne
+has_binder: true
+has_settings: true
+kind: server
+labextension_name: jupyterlab-jhub-apps
+project_short_description: Customisations for jhub-apps.
+python_name: jupyterlab_jhub_apps
+repository: https://github.com/nebari-dev/jupyterlab-jhub-apps.git
+test: true
+

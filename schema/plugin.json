@@ -1,0 +1,8 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "title": "jupyterlab-jhub-apps",
+  "description": "jupyterlab-jhub-apps settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}
