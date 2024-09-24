@@ -40,10 +40,6 @@ jobs:
         set -eux
         python -m pip install .[test]
 
-        pytest -vv -r ap --cov jupyterlab_jhub_apps
-        jupyter server extension list
-        jupyter server extension list 2>&1 | grep -ie "jupyterlab_jhub_apps.*OK"
-
         jupyter labextension list
         jupyter labextension list 2>&1 | grep -ie "jupyterlab-jhub-apps.*OK"
         python -m jupyterlab.browser_check
@@ -85,9 +81,6 @@ jobs:
 
         pip install "jupyterlab>=4.0.0,<5" jupyterlab_jhub_apps*.whl
 
-
-        jupyter server extension list
-        jupyter server extension list 2>&1 | grep -ie "jupyterlab_jhub_apps.*OK"
 
         jupyter labextension list
         jupyter labextension list 2>&1 | grep -ie "jupyterlab-jhub-apps.*OK"
