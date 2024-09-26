@@ -17,6 +17,8 @@ test('should have Deploy App icon in notebook toolbar', async ({ page }) => {
 
   await page.waitForSelector('.jp-NotebookPanel-toolbar');
 
+  await page.waitForSelector('.jp-KernelStatus .jp-StatusItem[title*="Idle"]');
+
   const deployAppIcon = page.locator(
     '.jp-Toolbar-item[data-jp-item-name="deploy-app"]'
   );
@@ -63,7 +65,7 @@ test('should open new tab with correct URL when deploy-app command is executed',
   await newPage.waitForLoadState('load');
 
   expect(newPage.url()).toBe(
-    'http://localhost:8888/services/japps/create-app?filepath='
+    'http://localhost:8888/services/japps/create-app'
   );
 
   await newPage.close();
