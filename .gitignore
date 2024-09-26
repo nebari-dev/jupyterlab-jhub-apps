@@ -126,3 +126,6 @@ dmypy.json
 
 # virtualenv
 .venv/
+
+# JUnit test results
+junit.xml
