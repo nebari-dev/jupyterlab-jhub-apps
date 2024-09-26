@@ -58,9 +58,7 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
         await openURL(deployUrl);
       },
       label: 'Deploy App',
-      icon: args => {
-        return calculateIcon(args);
-      }
+      icon: calculateIcon
     });
   }
 };
