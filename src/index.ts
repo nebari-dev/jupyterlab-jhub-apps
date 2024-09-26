@@ -38,9 +38,7 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
         case 'main-menu':
           return undefined;
         case 'context-menu':
-          return deployAppIcon;
         case undefined:
-          return deployAppIcon;
         default:
           return deployAppIcon;
       }
