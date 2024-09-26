@@ -24,7 +24,7 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
   description: 'Adds additional commands used by jhub-apps.',
   autoStart: true,
   requires: [],
-  activate: async (app: JupyterFrontEnd) => {
+  activate: (app: JupyterFrontEnd) => {
     const openURL = async (url: string) => {
       try {
         window.open(url, '_blank', 'noopener,noreferrer');
