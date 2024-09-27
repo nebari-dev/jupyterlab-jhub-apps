@@ -17,14 +17,20 @@ test('should have Deploy App icon in notebook toolbar', async ({ page }) => {
 
   await page.waitForSelector('.jp-NotebookPanel-toolbar');
 
-  await page.waitForSelector('.jp-KernelStatus .jp-StatusItem[title*="Idle"]');
-
   const deployAppIcon = page.locator(
     '.jp-Toolbar-item[data-jp-item-name="deploy-app"]'
   );
   await expect(deployAppIcon).toBeVisible();
 
   const notebookToolbar = page.locator('.jp-NotebookPanel-toolbar');
+
+  // kernel status switches between idle and busy on startup, hack
+  // to wait until kernel is idle permanently
+  await page.waitForSelector(
+    '.jp-Notebook-ExecutionIndicator[data-status="idle"]'
+  );
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  await page.$('.jp-Notebook-ExecutionIndicator[data-status="idle"]');
   expect(await notebookToolbar.screenshot()).toMatchSnapshot(
     'notebook-toolbar-before-click.png'
   );
@@ -50,7 +56,46 @@ test('should show Deploy App option in context menu', async ({ page }) => {
   );
 });
 
-test('should open new tab with correct URL when deploy-app command is executed', async ({
+test.describe('Deploy App with different notebook names to test URL encoding', () => {
+  const testCases = [
+    { name: 'My Notebook.ipynb', expected: 'My%20Notebook.ipynb' },
+    { name: 'Untitled.ipynb', expected: 'Untitled.ipynb' },
+    {
+      name: 'special!@#$%^&*().ipynb',
+      expected: 'special!%40%23%24%25%5E%26*().ipynb'
+    }
+  ];
+
+  testCases.forEach(({ name, expected }) => {
+    test(`should generate correct encoding for "${name}"`, async ({
+      page,
+      context,
+      tmpPath
+    }) => {
+      await page.notebook.createNew(name);
+
+      const notebookItem = page
+        .locator('.jp-DirListing-item[data-isdir="false"]')
+        .first();
+      await notebookItem.click({ button: 'right' });
+      const deployAppOption = page.locator(
+        '.lm-Menu-item:has-text("Deploy App")'
+      );
+      await deployAppOption.click();
+
+      const newPage = await context.waitForEvent('page');
+      await newPage.waitForLoadState('load');
+
+      const fullUrl = newPage.url();
+      const filepathParam = fullUrl.split('filepath=')[1];
+      expect(filepathParam).toBe(tmpPath + '%2F' + expected);
+
+      await newPage.close();
+    });
+  });
+});
+
+test('check that the filepath parameter is not present in the URL when no notebook is open', async ({
   page,
   context
 }) => {
@@ -64,9 +109,8 @@ test('should open new tab with correct URL when deploy-app command is executed',
 
   await newPage.waitForLoadState('load');
 
-  expect(newPage.url()).toBe(
-    'http://localhost:8888/services/japps/create-app'
-  );
+  const url = new URL(newPage.url());
+  expect(url.searchParams.has('filepath')).toBe(false);
 
   await newPage.close();
 });

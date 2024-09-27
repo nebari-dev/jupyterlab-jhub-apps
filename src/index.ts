@@ -51,8 +51,12 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
           currentWidget && currentWidget instanceof DocumentWidget
             ? currentWidget.context.path
             : '';
-        const deployUrl = `/services/japps/create-app?filepath=${encodeURIComponent(currentNotebookPath)}`;
-
+        let deployUrl;
+        if (currentNotebookPath !== '') {
+          deployUrl = `/services/japps/create-app?filepath=${encodeURIComponent(currentNotebookPath)}`;
+        } else {
+          deployUrl = '/services/japps/create-app';
+        }
         await openURL(deployUrl);
       },
       label: 'Deploy App',
