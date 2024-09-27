@@ -25,7 +25,9 @@ test('should have Deploy App icon in notebook toolbar', async ({ page }) => {
   // hack to hide kernel status indicator - otherwise toggle between idle and busy on startup
   // and test will fail randomly
   await page.evaluate(() => {
-    const kernelStatus = document.querySelector('.jp-NotebookPanel-toolbar .jp-Notebook-ExecutionIndicator') as HTMLElement;
+    const kernelStatus = document.querySelector(
+      '.jp-NotebookPanel-toolbar .jp-Notebook-ExecutionIndicator'
+    ) as HTMLElement;
     if (kernelStatus) {
       kernelStatus.style.display = 'none';
     }
