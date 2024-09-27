@@ -13,7 +13,7 @@ test('should have Deploy App entry in Services menu', async ({ page }) => {
 });
 
 test('should have Deploy App icon in notebook toolbar', async ({ page }) => {
-  await page.click('text=Python 3');
+  await page.notebook.createNew();
 
   await page.waitForSelector('.jp-NotebookPanel-toolbar');
 
@@ -22,15 +22,16 @@ test('should have Deploy App icon in notebook toolbar', async ({ page }) => {
   );
   await expect(deployAppIcon).toBeVisible();
 
-  const notebookToolbar = page.locator('.jp-NotebookPanel-toolbar');
+  // hack to hide kernel status indicator - otherwise toggle between idle and busy on startup
+  // and test will fail randomly
+  await page.evaluate(() => {
+    const kernelStatus = document.querySelector('.jp-NotebookPanel-toolbar .jp-Notebook-ExecutionIndicator') as HTMLElement;
+    if (kernelStatus) {
+      kernelStatus.style.display = 'none';
+    }
+  });
 
-  // kernel status switches between idle and busy on startup, hack
-  // to wait until kernel is idle permanently
-  await page.waitForSelector(
-    '.jp-Notebook-ExecutionIndicator[data-status="idle"]'
-  );
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  await page.$('.jp-Notebook-ExecutionIndicator[data-status="idle"]');
+  const notebookToolbar = page.locator('.jp-NotebookPanel-toolbar');
   expect(await notebookToolbar.screenshot()).toMatchSnapshot(
     'notebook-toolbar-before-click.png'
   );
