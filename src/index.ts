@@ -44,7 +44,7 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
     };
 
     app.commands.addCommand(CommandIDs.deployApp, {
-      execute: async () => {
+      execute: () => {
         const currentWidget = app.shell.currentWidget;
         const currentNotebookPath =
           currentWidget && currentWidget instanceof DocumentWidget
@@ -56,7 +56,7 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
         } else {
           deployUrl = '/services/japps/create-app';
         }
-        await openURL(deployUrl);
+        openURL(deployUrl);
       },
       label: 'Deploy App',
       icon: calculateIcon
