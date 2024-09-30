@@ -1,7 +1,7 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
 _commit: v4.3.5
 _src_path: https://github.com/jupyterlab/extension-template
-author_email: nbyrne@quansight.com
+author_email: internal-it@quansight.com
 author_name: Nick Byrne
 has_binder: true
 has_settings: true

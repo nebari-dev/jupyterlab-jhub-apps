@@ -3,8 +3,11 @@
 [![Github Actions Status](https://github.com/nebari-dev/jupyterlab-jhub-apps/workflows/Build/badge.svg)](https://github.com/nebari-dev/jupyterlab-jhub-apps/actions/workflows/build.yml)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/nebari-dev/jupyterlab-jhub-apps/main?urlpath=lab)
 
+Customizations for [jhub-apps](https://github.com/nebari-dev/jhub-apps).
 
-Customizations for jhub-apps.
+## Plugins
+
+- `jhub-apps:deploy-app`: Adds a command to deploy an app from the current notebook. This command is available from the main menu and context menu, as well as a toolbar icon.
 
 ## Requirements
 
