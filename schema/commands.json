@@ -9,7 +9,8 @@
           {
             "command": "jhub-apps:deploy-app",
             "args": {
-              "origin": "main-menu"
+              "origin": "main-menu",
+              "headless": true
             }
           }
         ]
@@ -19,7 +20,8 @@
       {
         "command": "jhub-apps:deploy-app",
         "args": {
-          "origin": "context-menu"
+          "origin": "context-menu",
+          "headless": true
         },
         "selector": ".jp-DirListing-item[data-isdir=\"false\"]",
         "rank": 3
@@ -31,6 +33,10 @@
       {
         "name": "deploy-app",
         "command": "jhub-apps:deploy-app",
+        "args": {
+          "origin": "toolbar",
+          "headless": true
+        },
         "label": "Deploy App"
       }
     ]
