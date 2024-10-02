@@ -7,7 +7,23 @@ Customizations for [jhub-apps](https://github.com/nebari-dev/jhub-apps).
 
 ## Plugins
 
-- `jhub-apps:deploy-app`: Adds a command to deploy an app from the current notebook. This command is available from the main menu and context menu, as well as a toolbar icon.
+- `jhub-apps:deploy-app`: Adds a command to deploy an app from the currently active widget. This command is available from the main menu and context menu, as well as a toolbar icon for both files and notebooks. If there is a path associated with the currently active widget, then this is the path used for deploying the app.
+
+**Toolbar Icon (Notebook):**
+
+![](https://raw.githubusercontent.com/nebari-dev/jupyterlab-jhub-apps/main/ui-tests/tests/jupyterlab_jhub_apps.spec.ts-snapshots/notebook-toolbar-before-click-linux.png)
+
+**Toolbar Icon (File Editor):**
+
+TO BE UPDATED
+
+**Main Menu:**
+
+![](https://raw.githubusercontent.com/nebari-dev/jupyterlab-jhub-apps/main/ui-tests/tests/jupyterlab_jhub_apps.spec.ts-snapshots/services-menu-with-deploy-app-linux.png)
+
+**Context Menu:**
+
+![](https://raw.githubusercontent.com/nebari-dev/jupyterlab-jhub-apps/main/ui-tests/tests/jupyterlab_jhub_apps.spec.ts-snapshots/notebook-context-menu-with-deploy-app-linux.png)
 
 ## Requirements
 
