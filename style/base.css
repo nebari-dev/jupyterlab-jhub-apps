@@ -3,3 +3,13 @@
 
     https://jupyterlab.readthedocs.io/en/stable/developer/css.html
 */
+
+.jp-ToolbarButtonComponent[data-command='jhub-apps:deploy-app'] svg {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.jp-ToolbarButtonComponent[data-command='jhub-apps:deploy-app']
+  .jp-ToolbarButtonComponent-label {
+  vertical-align: middle;
+}

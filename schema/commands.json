@@ -30,7 +30,8 @@
     "Notebook": [
       {
         "name": "deploy-app",
-        "command": "jhub-apps:deploy-app"
+        "command": "jhub-apps:deploy-app",
+        "label": "Deploy App"
       }
     ]
   },
