@@ -12,6 +12,25 @@ test('should have Deploy App entry in Services menu', async ({ page }) => {
   );
 });
 
+test('should have Deploy App icon in file editor toolbar', async ({ page }) => {
+  await page.menu.clickMenuItem('File>New>Python File');
+  await page.locator(`[role="main"] >> text=untitled.py`).waitFor();
+
+  const deployAppIcon = page.locator(
+    '.jp-Toolbar-item[data-jp-item-name="deploy-app"]'
+  );
+  await expect(deployAppIcon).toBeVisible();
+
+  const fileEditorToolbar = page.getByRole('toolbar', {
+    name: 'notebook actions'
+  });
+  await expect(fileEditorToolbar).toBeVisible();
+
+  expect(await fileEditorToolbar.screenshot()).toMatchSnapshot(
+    'file-editor-toolbar-before-click.png'
+  );
+});
+
 test('should have Deploy App icon in notebook toolbar', async ({ page }) => {
   await page.notebook.createNew();
 

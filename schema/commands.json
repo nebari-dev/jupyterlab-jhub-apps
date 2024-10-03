@@ -33,6 +33,13 @@
         "command": "jhub-apps:deploy-app",
         "label": "Deploy App"
       }
+    ],
+    "Editor": [
+      {
+        "name": "deploy-app",
+        "command": "jhub-apps:deploy-app",
+        "label": "Deploy App"
+      }
     ]
   },
   "title": "jupyterlab-jhub-apps",
