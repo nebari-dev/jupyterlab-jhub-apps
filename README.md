@@ -15,7 +15,7 @@ Customizations for [jhub-apps](https://github.com/nebari-dev/jhub-apps).
 
 **Toolbar Icon (File Editor):**
 
-TO BE UPDATED
+![](https://raw.githubusercontent.com/nebari-dev/jupyterlab-jhub-apps/main/ui-tests/tests/jupyterlab_jhub_apps.spec.ts-snapshots/file-editor-toolbar-before-click-linux.png)
 
 **Main Menu:**
 
