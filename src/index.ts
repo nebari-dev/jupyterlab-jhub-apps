@@ -52,7 +52,7 @@ const hasContextPath = (widget: any): widget is IPathWidget => {
   return widget && widget.context && typeof widget.context.path === 'string';
 };
 
-function coerceBooleanString(value: any): string {
+function coerceBooleanString(value: any): 'true' | 'false' {
   if (value === undefined) {
     return 'true';
   }
@@ -61,7 +61,7 @@ function coerceBooleanString(value: any): string {
     typeof value === 'string' &&
     ['true', 'false'].includes(value.toLowerCase())
   ) {
-    return value.toLowerCase();
+    return value.toLowerCase() as 'true' | 'false';
   }
 
   console.warn(`Invalid value: ${value}. Defaulting to 'true'.`);
