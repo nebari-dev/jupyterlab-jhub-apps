@@ -29,8 +29,8 @@ interface IDeployAppArgs {
    * Additional query parameters to be appended to the baseUrl.
    */
   queryParameters?: {
-    headless: string;
-    filepath: string
+    headless?: string;
+    filepath?: string;
   };
 }
 
@@ -51,6 +51,22 @@ interface IPathWidget {
 const hasContextPath = (widget: any): widget is IPathWidget => {
   return widget && widget.context && typeof widget.context.path === 'string';
 };
+
+function coerceBooleanString(value: any): string {
+  if (value === undefined) {
+    return 'true';
+  }
+
+  if (
+    typeof value === 'string' &&
+    ['true', 'false'].includes(value.toLowerCase())
+  ) {
+    return value.toLowerCase();
+  }
+
+  console.warn(`Invalid value: ${value}. Defaulting to 'true'.`);
+  return 'true';
+}
 
 export function buildQueryString(params: Record<string, string>): string {
   return Object.entries(params)
@@ -95,22 +111,7 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
             ? queryParameters.filepath
             : filepath;
 
-        const headless = (() => {
-          const value = queryParameters.headless;
-          if (value === undefined) {
-            return 'true';
-          }
-          if (
-            typeof value === 'string' &&
-            ['true', 'false'].includes(value.toLowerCase())
-          ) {
-            return value.toLowerCase();
-          }
-          console.warn(`
-            Invalid 'headless' value: ${value}. Defaulting to 'true'.
-            `);
-          return 'true';
-        })();
+        const headless = coerceBooleanString(queryParameters.headless);
 
         const updatedQueryParameters = {
           ...queryParameters,
