@@ -28,7 +28,10 @@ interface IDeployAppArgs {
   /**
    * Additional query parameters to be appended to the baseUrl.
    */
-  queryParameters?: Record<string, string>;
+  queryParameters?: {
+    headless: string;
+    filepath: string
+  };
 }
 
 interface IPathWidget {
