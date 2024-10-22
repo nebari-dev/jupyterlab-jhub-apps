@@ -1,4 +1,4 @@
-import { expect, test } from '@jupyterlab/galata';
+import { expect, test, galata } from '@jupyterlab/galata';
 
 test('should have Deploy App entry in Services menu', async ({ page }) => {
   await page.click('text=Services');
@@ -40,8 +40,7 @@ test('should have Deploy App icon in notebook toolbar', async ({ page }) => {
 });
 
 test('should show Deploy App option in context menu', async ({ page }) => {
-  await page.click('text=Python 3');
-  await page.waitForSelector('.jp-NotebookPanel');
+  await page.notebook.createNew();
 
   await page.waitForSelector('.jp-DirListing-item[data-isdir="false"]');
 
@@ -59,7 +58,16 @@ test('should show Deploy App option in context menu', async ({ page }) => {
   );
 });
 
-test.describe('Deploy App with different notebook names to test URL encoding', () => {
+test.describe('Tests with headless set to false', () => {
+  test.use({
+    mockSettings: {
+      ...galata.DEFAULT_SETTINGS,
+      'jupyterlab-jhub-apps:commands': {
+        queryParameters: { headless: 'false' }
+      }
+    }
+  });
+
   const testCases = [
     { name: 'My Notebook.ipynb', expected: 'My%20Notebook.ipynb' },
     { name: 'Untitled.ipynb', expected: 'Untitled.ipynb' },
@@ -70,55 +78,109 @@ test.describe('Deploy App with different notebook names to test URL encoding', (
   ];
 
   testCases.forEach(({ name, expected }) => {
-    test(`should generate correct encoding for "${name}"`, async ({
+    test(`Should generate correct encoding for notebook named "${name}"`, async ({
       page,
       context,
       tmpPath
     }) => {
       await page.notebook.createNew(name);
-
-      const notebookItem = page
-        .locator('.jp-DirListing-item[data-isdir="false"]')
-        .first();
-      await notebookItem.click({ button: 'right' });
-      const deployAppOption = page.locator(
-        '.lm-Menu-item:has-text("Deploy App")'
-      );
-      await deployAppOption.click();
+      await page.getByLabel(name).getByText('Deploy App').click();
 
       const newPage = await context.waitForEvent('page');
       await newPage.waitForLoadState('load');
 
-      const fullUrl = newPage.url();
-      const filepathParam = fullUrl.split('filepath=')[1];
+      const filepathParam = newPage.url().split('filepath=')[1];
       expect(filepathParam).toBe(tmpPath + '%2F' + expected);
 
       await newPage.close();
     });
   });
+
+  test('Check that the filepath parameter is empty when no widget is present', async ({
+    page,
+    context
+  }) => {
+    const newPagePromise = context.waitForEvent('page');
+
+    await page.evaluate(() => {
+      window.jupyterapp.commands.execute('jhub-apps:deploy-app');
+    });
+
+    const newPage = await newPagePromise;
+    await newPage.waitForLoadState('load');
+
+    const url = new URL(newPage.url());
+    expect(url.searchParams.has('filepath')).toBe(true);
+
+    const filepathParam = url.searchParams.get('filepath');
+    expect(filepathParam).toBe('');
+
+    await newPage.close();
+  });
 });
 
-test('check that the filepath parameter is not present in the URL when no notebook is open', async ({
-  page,
-  context
-}) => {
-  const newPagePromise = context.waitForEvent('page');
+test.describe('Tests with headless set to true', () => {
+  const baseUrl = '/services/japps/create-app';
 
-  await page.evaluate(() => {
-    window.jupyterapp.commands.execute('jhub-apps:deploy-app');
+  test.use({
+    mockSettings: {
+      ...galata.DEFAULT_SETTINGS,
+      'jupyterlab-jhub-apps:commands': {
+        queryParameters: { headless: 'true' },
+        baseUrl: baseUrl
+      }
+    }
   });
 
-  const newPage = await newPagePromise;
+  const testCases = [
+    { name: 'My Notebook.ipynb', expected: 'My%20Notebook.ipynb' },
+    { name: 'Untitled.ipynb', expected: 'Untitled.ipynb' },
+    {
+      name: 'special!@#$%^&*().ipynb',
+      expected: 'special!%40%23%24%25%5E%26*().ipynb'
+    }
+  ];
 
-  await newPage.waitForLoadState('load');
+  testCases.forEach(({ name, expected }) => {
+    test(`Should generate correct encoding for notebook named "${name}"`, async ({
+      page,
+      tmpPath
+    }) => {
+      await page.notebook.createNew(name);
 
-  const url = new URL(newPage.url());
-  expect(url.searchParams.has('filepath')).toBe(false);
+      const requestPromise = page.waitForRequest(
+        request =>
+          request
+            .url()
+            .includes(
+              `${baseUrl}?headless=true&filepath=${tmpPath}%2F${expected}`
+            ) && request.method() === 'GET'
+      );
 
-  await newPage.close();
+      await page.getByLabel(name).getByText('Deploy App').click();
+
+      expect(page.getByRole('tab', { name: 'Deploy App' })).toBeVisible();
+      expect(await requestPromise).toBeTruthy();
+    });
+  });
+
+  test('Check that the filepath parameter is empty when no widget is present', async ({
+    page
+  }) => {
+    const requestPromise = page.waitForRequest(
+      request =>
+        request.url().includes(`${baseUrl}?headless=true&filepath=`) &&
+        request.method() === 'GET'
+    );
+
+    await page.click('text=Services');
+    await page.locator('.lm-Menu-item:has-text("Deploy App")').click();
+
+    expect(await requestPromise).toBeTruthy();
+  });
 });
 
-test.describe('should register custom commands', () => {
+test.describe('Should register custom commands', () => {
   test('jhub-apps:deploy-app command works', async ({ page }) => {
     const deployAppMainMenu = await page.evaluate(async () => {
       const registry = window.jupyterapp.commands;
@@ -136,4 +198,30 @@ test.describe('should register custom commands', () => {
 
     expect(deployAppMainMenu.isEnabled).toBe(true);
   });
+});
+
+test('should restore correct state', async ({ page }) => {
+  await page.notebook.createNew('Untitled.ipynb');
+  await page.getByLabel('Untitled.ipynb').getByText('Deploy App').click();
+  expect(
+    page.getByRole('tab', { name: 'Deploy App', selected: true })
+  ).toBeVisible();
+
+  await page.notebook.createNew('Untitled1.ipynb');
+  await page.getByLabel('Untitled1.ipynb').getByText('Deploy App').click();
+  expect(
+    page.getByRole('tab', { name: 'Deploy App', selected: true })
+  ).toBeVisible();
+
+  // opens the same form again - this should not be restored
+  // below as duplicates should not be restored
+  await page.getByRole('tab', { name: 'Untitled1.ipynb' }).click();
+  await page.getByLabel('Untitled1.ipynb').getByText('Deploy App').click();
+  expect(
+    page.getByRole('tab', { name: 'Deploy App', selected: true })
+  ).toBeVisible();
+
+  await page.reload();
+
+  expect(await page.screenshot()).toMatchSnapshot('multiple-tabs.png');
 });

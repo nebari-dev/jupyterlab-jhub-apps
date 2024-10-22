@@ -6,8 +6,8 @@ import {
 import { deployAppIcon } from './icons';
 import { WidgetTracker, IFrame, MainAreaWidget } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';
-
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
+import { coerceBooleanString, hasContextPath, buildQueryString } from './utils';
 
 const DEFAULT_BASE_URL = '/services/japps/create-app';
 
@@ -18,11 +18,8 @@ const PLUGIN_ID = 'jupyterlab-jhub-apps:commands';
  * These are read from the settings registry and updated any
  * time a user changes their settings.
  */
-const runtimeSettings = {
-  queryParameters: {} as {
-    headless?: string;
-    filepath?: string;
-  },
+const runtimeSettings: IDeployAppBaseConfig = {
+  queryParameters: {},
   baseUrl: DEFAULT_BASE_URL
 };
 
@@ -59,53 +56,11 @@ interface IDeployAppConfig extends IDeployAppBaseConfig {
 
 interface IDeployAppWidgetArgs extends IDeployAppBaseConfig {}
 
-interface IPathWidget {
-  /**
-   * The context object associated with the widget.
-   * Contains the metadata and information about the widget.
-   */
-  context: {
-    /**
-     * The path of the current document or resource associated with the widget.
-     * Typically represents the file path or location of the notebook or document.
-     */
-    path: string;
-  };
-}
-
 function applySettings(setting: ISettingRegistry.ISettings): void {
   runtimeSettings.queryParameters = setting.get('queryParameters')
-    .composite as Record<string, string>;
-  runtimeSettings.baseUrl = setting.get('baseUrl').composite as string;
-}
-
-const hasContextPath = (widget: any): widget is IPathWidget => {
-  return widget && widget.context && typeof widget.context.path === 'string';
-};
-
-function coerceBooleanString(value: any): 'true' | 'false' {
-  if (value === undefined) {
-    return 'true';
-  }
-
-  if (
-    typeof value === 'string' &&
-    ['true', 'false'].includes(value.toLowerCase())
-  ) {
-    return value.toLowerCase() as 'true' | 'false';
-  }
-
-  console.warn(`Invalid value: ${value}. Defaulting to 'true'.`);
-  return 'true';
-}
-
-function buildQueryString(params: Record<string, string>): string {
-  return Object.entries(params)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    )
-    .join('&');
+    .composite as IDeployAppBaseConfig['queryParameters'];
+  runtimeSettings.baseUrl = setting.get('baseUrl')
+    .composite as IDeployAppBaseConfig['baseUrl'];
 }
 
 const calculateIcon = (args: IDeployAppConfig) => {
@@ -234,7 +189,6 @@ const jhubAppsPlugin: JupyterFrontEndPlugin<void> = {
         });
       }
     });
-
     if (restorer) {
       restorer.restore(tracker, {
         command: CommandIDs.deployApp,
