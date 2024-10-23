@@ -225,7 +225,7 @@ test('should restore correct state', async ({ page }) => {
   await page.waitForTimeout(3000);
 
   // important, see https://github.com/jupyterlab/jupyterlab/issues/14350
-  await page.reload({waitForIsReady: false});
+  await page.reload({ waitForIsReady: false });
 
   // not ideal, but due to previous bug need time for page reload to complete
   await page.waitForTimeout(3000);
