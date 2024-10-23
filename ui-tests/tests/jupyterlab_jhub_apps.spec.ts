@@ -221,7 +221,14 @@ test('should restore correct state', async ({ page }) => {
     page.getByRole('tab', { name: 'Deploy App', selected: true })
   ).toBeVisible();
 
-  await page.reload();
+  // not ideal, but need to wait some time for the state to be saved
+  await page.waitForTimeout(3000);
+
+  // important, see https://github.com/jupyterlab/jupyterlab/issues/14350
+  await page.reload({waitForIsReady: false});
+
+  // not ideal, but due to previous bug need time for page reload to complete
+  await page.waitForTimeout(3000);
 
   expect(await page.screenshot()).toMatchSnapshot('multiple-tabs.png');
 });
