@@ -31,6 +31,9 @@
       {
         "name": "deploy-app",
         "command": "jhub-apps:deploy-app",
+        "args": {
+          "origin": "toolbar"
+        },
         "label": "Deploy App"
       }
     ],
@@ -45,6 +48,19 @@
   "title": "jupyterlab-jhub-apps",
   "description": "jupyterlab-jhub-apps custom command settings.",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "baseUrl": {
+      "type": "string",
+      "title": "Base URL",
+      "description": "The base URL of the app deployment form.",
+      "default": "/services/japps/create-app"
+    },
+    "queryParameters": {
+      "type": "object",
+      "title": "Query Parameters",
+      "description": "Additional query parameters to be appended to the baseUrl. All keys and values must be strings.",
+      "default": { "headless": "true" }
+    }
+  },
   "additionalProperties": false
 }
