@@ -230,7 +230,7 @@ test('should restore correct state', async ({ page }) => {
   // not ideal, but due to previous bug need time for page reload to complete
   await page.waitForTimeout(3000);
 
-  const mainPanel = page.locator("#jp-main-dock-panel");
+  const mainPanel = page.locator('#jp-main-dock-panel');
 
   expect(await mainPanel.screenshot()).toMatchSnapshot('multiple-tabs.png');
 });
