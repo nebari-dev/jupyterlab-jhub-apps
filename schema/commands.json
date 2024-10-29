@@ -62,7 +62,8 @@
       "properties": {
         "headless": {
           "title": "headless",
-          "type": "string"
+          "type": "string",
+          "enum": ["true", "false"]
         }
       },
       "default": { "headless": "true" }
