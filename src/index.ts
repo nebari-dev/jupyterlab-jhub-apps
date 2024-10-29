@@ -8,7 +8,7 @@ import { WidgetTracker, IFrame, MainAreaWidget } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { coerceBooleanString, hasContextPath, buildQueryString } from './utils';
-
+import { VirtualElement } from '@lumino/virtualdom';
 const DEFAULT_BASE_URL = '/services/japps/create-app';
 
 const PLUGIN_ID = 'jupyterlab-jhub-apps:commands';
@@ -223,7 +223,7 @@ class DeployAppWidget extends Widget {
     this.id = 'deploy-app-jupyterlab';
     this.title.label = 'Deploy App';
     this.title.closable = true;
-    this.title.icon = deployAppIcon;
+    this.title.icon = this._createIconRenderer();
 
     this._iframe = new IFrame();
     this._iframe.sandbox = ['allow-scripts', 'allow-same-origin'];
@@ -241,5 +241,17 @@ class DeployAppWidget extends Widget {
 
   getCompleteUrl(): string {
     return `${this._baseUrl}?${buildQueryString(this._queryParameters)}`;
+  }
+
+  private _createIconRenderer(): VirtualElement.IRenderer {
+    return {
+      render: (container: HTMLElement) => {
+        deployAppIcon.element({
+          container,
+          width: '15px',
+          elementPosition: 'center'
+        });
+      }
+    };
   }
 }
