@@ -225,7 +225,12 @@ class DeployAppWidget extends Widget {
     this.title.closable = true;
 
     this._iframe = new IFrame();
-    this._iframe.sandbox = ['allow-scripts', 'allow-same-origin'];
+    this._iframe.sandbox = [
+      'allow-scripts',
+      'allow-same-origin',
+      'allow-popups',
+      'allow-forms'
+    ];
     this._iframe.url = this.getCompleteUrl();
     this.node.appendChild(this._iframe.node);
   }
