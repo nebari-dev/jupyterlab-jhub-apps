@@ -223,6 +223,7 @@ class DeployAppWidget extends Widget {
     this.id = 'deploy-app-jupyterlab';
     this.title.label = 'Deploy App';
     this.title.closable = true;
+    this.title.icon = deployAppIcon;
 
     this._iframe = new IFrame();
     this._iframe.sandbox = ['allow-scripts', 'allow-same-origin'];
