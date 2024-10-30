@@ -58,7 +58,14 @@
     "queryParameters": {
       "type": "object",
       "title": "Query Parameters",
-      "description": "Additional query parameters to be appended to the baseUrl. All keys and values must be strings.",
+      "description": "Additional query parameters to be appended to the baseUrl.",
+      "properties": {
+        "headless": {
+          "title": "headless",
+          "type": "string",
+          "enum": ["true", "false"]
+        }
+      },
       "default": { "headless": "true" }
     }
   },
