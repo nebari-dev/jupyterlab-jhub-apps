@@ -1,4 +1,6 @@
 {
+  "jupyter.lab.setting-icon": "ui-components:folder",
+  "jupyter.lab.setting-icon-label": "INSERT LABEL",
   "jupyter.lab.menus": {
     "main": [
       {
@@ -45,7 +47,7 @@
       }
     ]
   },
-  "title": "jupyterlab-jhub-apps",
+  "title": "jhub-apps integration",
   "description": "jupyterlab-jhub-apps custom command settings.",
   "type": "object",
   "properties": {
